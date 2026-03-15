@@ -1,7 +1,7 @@
 // ============================================================
 // Signal Formatter - Inflection Intelligence
 // Converts **bold** to <strong> and splits section headings
-// Separates sections Contexte/Mecanisme/Consequence
+// Separates sections (Contexte/Mecanisme/Consequence etc.)
 // Load on /signaux/... pages
 // ============================================================
 
@@ -18,9 +18,11 @@
     '.ii-ch p'
   ].join(', ');
 
-  // Regex: bold section headings followed by a dash
-  // Uses \uXXXX escapes for accented chars to avoid encoding issues
-  const HEADING_RE = /(?=<strong>(?:Contexte|M\u00e9canisme|Cons\u00e9quence|Implications|Catalyseurs|Risques|Tendance|Dynamique|Signal|Analyse|Facteurs|Enjeux|Opportunit\u00e9s|Acteurs|Projection|Acc\u00e9l\u00e9rateurs|Freins|Verdict|Synth\u00e8se)[^<]*<\/strong>\s*[\u2014\u2013\-:])/;
+  // Generic regex: any bold text (3-50 chars) followed by em-dash or en-dash
+  // Matches section headings like <strong>Contexte</strong> \u2014 ...
+  // Works for both standard (Contexte/Mecanisme/Consequence)
+  // and custom headings (Planification contextuelle de trajets, etc.)
+  const HEADING_RE = /(?=<strong>[^<]{3,50}<\/strong>\s*[\u2014\u2013])/;
 
   function formatElement(el) {
     const text = el.textContent || '';
