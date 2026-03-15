@@ -1,8 +1,8 @@
 // ============================================================
-// Signal Formatter â Inflection Intelligence
-// Convertit **bold** â <strong> et \n\n â paragraphes multiples
-// SÃ©pare les sections Contexte/MÃ©canisme/ConsÃ©quence
-// Ã charger sur les pages /signaux/...
+// Signal Formatter - Inflection Intelligence
+// Converts **bold** to <strong> and splits section headings
+// Separates sections Contexte/Mecanisme/Consequence
+// Load on /signaux/... pages
 // ============================================================
 
 (function() {
@@ -18,8 +18,9 @@
     '.ii-ch p'
   ].join(', ');
 
-  // Regex: titres de section en gras suivis d'un tiret
-  const HEADING_RE = /(?=<strong>(?:Contexte|MÃ©canisme|ConsÃ©quence|Implications|Catalyseurs|Risques|Tendance|Dynamique|Signal|Analyse|Facteurs|Enjeux|OpportunitÃ©s|Acteurs|Projection|AccÃ©lÃ©rateurs|Freins|Verdict|SynthÃ¨se)[^<]*<\/strong>\s*[ââ\-:])/;
+  // Regex: bold section headings followed by a dash
+  // Uses \uXXXX escapes for accented chars to avoid encoding issues
+  const HEADING_RE = /(?=<strong>(?:Contexte|M\u00e9canisme|Cons\u00e9quence|Implications|Catalyseurs|Risques|Tendance|Dynamique|Signal|Analyse|Facteurs|Enjeux|Opportunit\u00e9s|Acteurs|Projection|Acc\u00e9l\u00e9rateurs|Freins|Verdict|Synth\u00e8se)[^<]*<\/strong>\s*[\u2014\u2013\-:])/;
 
   function formatElement(el) {
     const text = el.textContent || '';
@@ -28,13 +29,13 @@
     let html = escapeHtml(text);
     html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 
-    // 1) Split sur \n\n si prÃ©sent
+    // 1) Split on \n\n if present
     if (html.includes('\n\n')) {
       const parts = html.split(/\n\n+/).filter(p => p.trim());
       if (parts.length > 1) { replaceParagraphs(el, parts); return; }
     }
 
-    // 2) Split sur <strong>Heading</strong> â (Webflow supprime les \n)
+    // 2) Split on <strong>Heading</strong> dash (Webflow strips newlines)
     const secParts = html.split(HEADING_RE).filter(p => p.trim());
     if (secParts.length > 1) { replaceParagraphs(el, secParts); return; }
 
